@@ -125,13 +125,7 @@ public class TwitterController
      */
     private void splitIntoWords()
     {
-        for(Status status : statuses)
-        {
-            for(String word: status.getText().split(" "))
-            {
-                tokens.add(word)
-            }
-        }
+        
     }
 
 
