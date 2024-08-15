@@ -40,5 +40,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
+    implementation 'io.github.takke:jp.takke.twitter4j-v2:1.4.3'
 
 }

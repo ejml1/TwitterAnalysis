@@ -31,10 +31,10 @@ public class TwitterController
 
         ConfigurationBuilder cb =  new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("**********")
-                .setOAuthConsumerSecret("********************************")
-                .setOAuthAccessToken("********************************")
-                .setOAuthAccessTokenSecret("********************************s");
+                .setOAuthConsumerKey("/")
+                .setOAuthConsumerSecret("/")
+                .setOAuthAccessToken("/")
+                .setOAuthAccessTokenSecret("/");
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
 
@@ -66,13 +66,17 @@ public class TwitterController
 
     public String postTweet(String message)
     {
+        TwitterV2 test = TwitterV2ExKt.getV2(twitter);
         String statusTextToReturn = "";
         try
         {
-            Status status = twitter.updateStatus(message);
-            statusTextToReturn = status.getText();
+            // Refer to createTweet method:
+            // https://github.com/takke/twitter4j-v2/blob/master/twitter4j-v2-support/src/main/kotlin/twitter4j/TwitterV2.kt
+            test.createTweet(null, null, null, null, null, null,
+                null, null, null, null, null, message);
         }
         catch (TwitterException e){
+            Log.d("", e.getErrorMessage());
             System.out.println(e.getErrorMessage());
         }
         return statusTextToReturn;

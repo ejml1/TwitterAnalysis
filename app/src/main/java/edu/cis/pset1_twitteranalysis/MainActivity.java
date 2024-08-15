@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 
 import edu.cis.pset1_twitteranalysis.twitter.TwitterController;
 
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity
 
         //TODO 1: Tweet something!
         TwitterController myC = new TwitterController(this);
-        myC.postTweet("hello world"); //this will tweet to your account
+        myC.postTweet("tweet!"); //this will tweet to your account
 
         String resultFromSearch = myC.findUserStats("MKBHD");
 
