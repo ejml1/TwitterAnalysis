@@ -17,6 +17,7 @@ import java.io.PrintStream;
 public class TwitterController
 {
     private Twitter twitter;
+    private TwitterV2 twitterV2;
     private ArrayList<Status> statuses;
     private ArrayList<String> tokens;
     private HashMap<String, Integer> wordCounts;
@@ -37,6 +38,7 @@ public class TwitterController
                 .setOAuthAccessTokenSecret("/");
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
+        twitterV2 = TwitterV2ExKt.getV2(twitter);
 
         statuses = new ArrayList<Status>();
         tokens = new ArrayList<String>();
@@ -66,13 +68,12 @@ public class TwitterController
 
     public String postTweet(String message)
     {
-        TwitterV2 test = TwitterV2ExKt.getV2(twitter);
         String statusTextToReturn = "";
         try
         {
             // Refer to createTweet method:
             // https://github.com/takke/twitter4j-v2/blob/master/twitter4j-v2-support/src/main/kotlin/twitter4j/TwitterV2.kt
-            test.createTweet(null, null, null, null, null, null,
+            twitterV2.createTweet(null, null, null, null, null, null,
                 null, null, null, null, null, message);
         }
         catch (TwitterException e){
