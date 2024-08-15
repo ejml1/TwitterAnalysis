@@ -16,6 +16,16 @@ import java.io.PrintStream;
 
 public class TwitterController
 {
+    private String tweetFields =
+        "attachments,author_id,context_annotations,conversation_id,created_at,edit_controls,entities," +
+                "geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets," +
+                "reply_settings,source,text,withheld";
+    private String tweetFieldsFull =
+        "attachments,author_id,context_annotations,conversation_id,created_at,edit_controls,entities," +
+                "geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets," +
+                "reply_settings,source,text,withheld,non_public_metrics,organic_metrics,promoted_metrics";
+
+
     private Twitter twitter;
     private TwitterV2 twitterV2;
     private ArrayList<Status> statuses;
@@ -32,10 +42,10 @@ public class TwitterController
 
         ConfigurationBuilder cb =  new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("/")
-                .setOAuthConsumerSecret("/")
-                .setOAuthAccessToken("/")
-                .setOAuthAccessTokenSecret("/");
+                .setOAuthConsumerKey("***")
+                .setOAuthConsumerSecret("***")
+                .setOAuthAccessToken("***")
+                .setOAuthAccessTokenSecret("***");
         TwitterFactory tf = new TwitterFactory(cb.build());
         twitter = tf.getInstance();
         twitterV2 = TwitterV2ExKt.getV2(twitter);
@@ -71,10 +81,12 @@ public class TwitterController
         String statusTextToReturn = "";
         try
         {
+            Log.d("", "Posting tweet");
             // Refer to createTweet method:
             // https://github.com/takke/twitter4j-v2/blob/master/twitter4j-v2-support/src/main/kotlin/twitter4j/TwitterV2.kt
             twitterV2.createTweet(null, null, null, null, null, null,
                 null, null, null, null, null, message);
+            Log.d("", "Tweet posted!");
             statusTextToReturn = message;
         }
         catch (TwitterException e){
@@ -84,41 +96,30 @@ public class TwitterController
         return statusTextToReturn;
     }
 
-    // Example query with paging and file output.
     private void fetchTweets(String handle)
     {
-
-
-        //Create a twitter paging object that will start at page 1 and hole 200 entries per page.
-        Paging page = new Paging(1, 200);
-
-        //Use a for loop to set the pages and get the necessary tweets.
-        for (int i = 1; i <= 10; i++)
+        String[] handleArr = {handle};
+        try
         {
-            page.setPage(i);
+            /*
+            * getUsersBy requires special access to twitter's V2 endpoints which is only accessible
+            * with the paid version
+            * */
+            UsersResponse users = twitterV2.getUsersBy(handleArr,tweetFields, tweetFieldsFull,"pinned_tweet_id");
+            // TODO: Test fetch tweets (code below is not tested due to no access to V2 endpoints)
+            List<User2> usersList = users.getUsers();
+            User2 user = usersList.get(0);
+            long userID = user.getId();
 
-            /* Ask for the tweets from twitter and add them all to the statuses ArrayList.
-            Because we set the page to receive 200 tweets per page, this should return
-            200 tweets every request. */
-            try{
-                statuses.addAll(twitter.getUserTimeline(handle, page));
-            }
-            catch (Exception err)
-            {
-                Log.d("fetchTweets", "could not get user timeline");
-            }
+            TweetsResponse tweets = twitterV2.getUserTweets(
+                    userID, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null);
+            int tweetsSize = tweets.getTweets().size();
+            Log.d("", "Number of tweets: " + tweetsSize);
         }
-
-        //Write to the file a header message. Useful for debugging.
-        int numberOfTweetsFound = statuses.size();
-        System.out.println("Number of Tweets Found: " + numberOfTweetsFound);
-
-        //Use enhanced for loop to print all the tweets found.
-        int count = 1;
-        for (Status tweet : statuses)
+        catch (Exception e)
         {
-            System.out.println(count+". "+tweet.getText());
-            count++;
+            Log.d("", e.toString());
         }
     }
 
