@@ -75,6 +75,7 @@ public class TwitterController
             // https://github.com/takke/twitter4j-v2/blob/master/twitter4j-v2-support/src/main/kotlin/twitter4j/TwitterV2.kt
             twitterV2.createTweet(null, null, null, null, null, null,
                 null, null, null, null, null, message);
+            statusTextToReturn = message;
         }
         catch (TwitterException e){
             Log.d("", e.getErrorMessage());
